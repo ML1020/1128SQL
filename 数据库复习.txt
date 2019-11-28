@@ -1,0 +1,122 @@
+一、库的操作
+显示数据库：show databases;
+  
+创建数据库：
+1.直接创建
+  create database bd_name;
+2.系统若是没有名为 test1 的数据库则创建，若有则不创建
+  create database if not exists test1;
+
+使用数据库： use 数据库名；
+
+删除数据库：drop database [if exists] db_name;
+说明：删除数据库后内部看不到对应的数据库，里面的表和数据全部被删除。
+
+二、表的操作
+首先使用存在该表的数据库
+  use db_name;
+创建表：
+  create table table_name(
+  field1 datatype,    
+  field2 datatype
+  )
+
+  例子：
+  create table student(
+  id int,
+  name varchar(20) comment '姓名',
+  password varchar(50) comment '密码',  
+  age int,  
+  sex varchar(1),
+  birthday timestamp,  
+  amout decimal(13,2),  
+  resume text
+  );
+  
+  CREATE TABLE student (
+  id INT,    
+  sn INT comment '学号',
+  name VARCHAR(20) comment '姓名',    
+  qq_mail VARCHAR(20) comment 'QQ邮箱' ,
+  chinese DECIMAL(3,1),    
+  math DECIMAL(3,1),    
+  english DECIMAL(3,1)
+  );
+  
+  //comment 增加字段说明
+  
+查看表：
+  desc 表名;
+  
+删除表：
+  drop table [if exists] table_name [,table_name];
+  
+  drop table student;
+  drop table if exists student;
+
+三、表内数据的增删改查:
+1 、新增Create：
+1.单行数据+全列插入
+  数量必须和定义表的列的数量及顺序一致
+  insert into student values(101, 10001, '孙悟空', '11111');
+2.多行数据+指定列插入
+  数量必须和定义表的列的数量及顺序一致
+  insert into student(id,sn,name) values
+   (102, 20001, '曹孟德'),   
+   (103, 20002, '孙仲谋');
+
+2 、查询Select:
+1.选择表的若干列
+全列查询 ： select * from student;
+指定列查询 :  select id,name from student;
+查询字段为表达式 :  select id,name,english + 10 from student;
+别名 :  select id,name,chinese + math 总分 from student;
+2.选择表的若元组
+消除重复行 去重Distinct  ： select distinct chinese from student;
+
+查询满足条件的元组：
+查询条件   谓词
+比较   =, >, <, >=, <=, !=, <>, !>, !< ;NOT+上述比较运算符
+确定范围   BETWEEN AND , NOT BETWEEN AND
+确定集合   IN , NOT IN
+字符匹配   LIKE , NOT LIKE
+空值   IS NULL , IS NOT NULL
+多重条件(逻辑运算)   AND , OR ,NOT
+
+模糊查询like
+  SELECT name FROM exam_result WHERE name LIKE '孙%';-- 匹配到孙悟空、孙权
+  --  _ 匹配严格的一个任意字符
+  SELECT name FROM exam_result WHERE name LIKE '孙_';-- 匹配到孙权
+  SELECT name FROM exam_result WHERE name LIKE '孙__';--孙悟空
+IN:
+  SELECT Sname,Sage,Sdept
+  FROM Student
+  WHERE Sdept IN ('CS','IS');
+3.排序order by
+   此语句对属性列进行升序(ASC)、降序(DESC)排序，默认为升序
+  select name,math from student order by math;
+  select name,math from student order by math desc;
+ 4.分页查询limit
+  -- 起始下标为 0
+  -- 从 0 开始，筛选 n 条结果
+  SELECT ... FROM table_name [WHERE ...] [ORDER BY ...] LIMIT n;
+  -- 从 s 开始，筛选 n 条结果
+  SELECT ... FROM table_name [WHERE ...] [ORDER BY ...] LIMIT n OFFSET s;
+5.聚集函数  
+COUNT(*)   统计元组个数
+COUNT([DISTINCT|ALL]<列名>)   统计一列中值的个数
+SUM([DISTINCT|ALL]<列名>)   计算一列值的总和(此列必须是数值型)
+AVG([DISTINCT|ALL]<列名>)   计算一列值的平均值(此列必须是数值型)
+MAX([DISTINCT|ALL]<列名>)   求一列中的最大值
+MIN([DISTINCT|ALL]<列名>)    求一列中的最小值
+注：聚集函数只能用于SELECT子句和GROUP BY中的HAVING子句。
+6.聚合查询
+集合操作主要包括并操作UNION、交操作INTERSECT、和差操作EXCEPT
+注意：参加集合操作的各项查询结果的列数必须相同，对应项的数据类型也必须相同。
+3、修改Update
+  update student set math = 80 where name = '孙悟空';
+  -- 将总成绩倒数前三的 3 位同学的英语成绩加上10
+  update student set english+10 order by chinese + math + english limit 3;
+4 、删除Delete
+  delete from table_name [WHERE ...] [ORDER BY ...] [LIMIT ...]
+  delete from 表名 where 条件;
